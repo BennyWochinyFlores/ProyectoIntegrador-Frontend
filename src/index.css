@@ -1,0 +1,344 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f4f6f9;
+  color: #1f2937;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1f3864;
+  color: white;
+  padding: 14px 28px;
+}
+
+.navbar-title {
+  font-weight: 600;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+}
+
+.content {
+  padding: 28px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 24px 28px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.login-card {
+  max-width: 380px;
+  margin: 40px auto;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  gap: 4px;
+}
+
+input {
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+button {
+  background: #1f3864;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-right: 6px;
+}
+
+button:hover {
+  background: #16294d;
+}
+
+.error-text {
+  color: #c8102e;
+  font-size: 14px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 10px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.badge {
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #e5e7eb;
+}
+
+.badge-pendiente {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-confirmada {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge-cancelada {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.badge-atendida {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+/* ===== Navegación ===== */
+.navbar-brand {
+  color: white;
+  text-decoration: none;
+}
+
+.navbar-user {
+  margin-left: 20px;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.btn-login {
+  background: white;
+  color: #1f3864 !important;
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  margin-left: 20px;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: white;
+  margin-left: 14px;
+}
+
+/* ===== Página de inicio ===== */
+.hero {
+  background: linear-gradient(135deg, #1f3864, #2f5aa8);
+  color: white;
+  border-radius: 12px;
+  padding: 48px 36px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.hero h1 {
+  font-size: 32px;
+  margin: 0 0 12px;
+}
+
+.hero p {
+  font-size: 16px;
+  max-width: 640px;
+  margin: 0 auto 22px;
+  opacity: 0.95;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn {
+  display: inline-block;
+  padding: 9px 16px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: #1f3864;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #16294d;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid #1f3864;
+  color: #1f3864;
+}
+
+.hero .btn-outline {
+  border-color: white;
+  color: white;
+}
+
+.hero .btn-outline:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.section-card {
+  margin-bottom: 24px;
+}
+
+.section-card h2 {
+  margin-top: 0;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.service-item {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.service-item h3 {
+  margin-top: 0;
+  color: #1f3864;
+}
+
+/* ===== Contacto ===== */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.contact-grid h3 {
+  margin-top: 0;
+  color: #1f3864;
+}
+
+select,
+textarea {
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* ===== Utilidades de página ===== */
+.page-title {
+  margin: 0 0 16px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-msg {
+  color: #6b7280;
+}
+
+.success-text {
+  color: #047857;
+  font-size: 14px;
+}
+
+.login-hint {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 14px;
+}
+
+/* ===== Tarjetas de niños ===== */
+.nino-card h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+/* ===== Badges de rol y avance ===== */
+.badge-role {
+  background: #ede9fe;
+  color: #5b21b6;
+  text-transform: capitalize;
+}
+
+.badge-inicial {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-en_progreso,
+.badge-en-progreso {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.badge-logrado {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+@media (max-width: 720px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .navbar {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
