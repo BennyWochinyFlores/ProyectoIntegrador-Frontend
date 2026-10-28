@@ -20,7 +20,7 @@ export default function ContactanosPage() {
             <p><strong>Dirección:</strong> Av. Los Terapeutas 123, Lima, Perú</p>
             <p><strong>Teléfono:</strong> (01) 555-1234</p>
             <p><strong>Correo:</strong> contacto@centroestimulacion.pe</p>
-            <p><strong>Horario:</strong> Lun a Vie 8:00 - 19:00 · Sáb 9:00 - 13:00</p>
+            <p><strong>Horario:</strong> Lun a Sáb 8:00 - 20:00 (domingos y feriados cerrado)</p>
           </div>
           <div>
             <h3>Escríbenos</h3>

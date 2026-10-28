@@ -4,7 +4,7 @@ import { api } from "../services/api.js";
 import { saveSession } from "../services/auth.js";
 
 const destinoPorRol = {
-  ADMIN: "/agenda",
+  ADMIN: "/trabajadores",
   RECEPCIONISTA: "/agenda",
   TERAPEUTA: "/agenda",
   APODERADO: "/mis-ninos",
@@ -22,11 +22,16 @@ export default function LoginPage() {
     setError("");
     setCargando(true);
     try {
-      const sesion = await api.login({ email, password });
+      const sesion = await api.login({ email: email.trim().toLowerCase(), password });
       saveSession(sesion);
       navigate(destinoPorRol[sesion.usuario.rol] || "/", { replace: true });
-    } catch {
-      setError("Credenciales inválidas. Intenta nuevamente.");
+    } catch (err) {
+      const esRed = err instanceof TypeError || String(err.message).includes("Failed to fetch");
+      setError(esRed
+        ? "No se pudo conectar al servidor. Verifica que el backend esté corriendo en el puerto 8080."
+        : err.message?.includes("intento") || err.message?.includes("bloqueada")
+          ? err.message
+          : "Credenciales inválidas. Revisa tu correo y contraseña.");
     } finally {
       setCargando(false);
     }
@@ -34,6 +39,10 @@ export default function LoginPage() {
 
   return (
     <div className="card login-card">
+      <div className="auth-brand">
+        <img src="/logo-paleta-wichay.jpeg" alt="Logo Wichay" />
+        <strong>Wichay · Centro de Estimulación Integral</strong>
+      </div>
       <h1>Iniciar sesión</h1>
       <form onSubmit={handleSubmit}>
         <label>

@@ -1,12 +1,11 @@
 # Frontend — Centro de Estimulación Integral
 
-React 19 + Vite. Consume la API REST del backend (Java 21 / Spring Boot).
+Aplicación web en React 19 + Vite. Consume la API REST del backend (Java 21 / Spring Boot).
 
 ## Requisitos previos
 
 - Node.js LTS (18+)
-- Visual Studio Code (recomendado)
-- El backend corriendo en `http://localhost:8080` (ver `../backend/README.md`)
+- El backend corriendo en `http://localhost:8080`
 
 ## Instalación y arranque
 
@@ -25,31 +24,26 @@ El archivo `.env` define la URL base de la API:
 VITE_API_URL=http://localhost:8080/api
 ```
 
-Si el backend corre en otra URL (por ejemplo, ya desplegado), actualiza esta variable.
+Si el backend corre en otra URL, actualiza esta variable.
 
 ## Estructura
 
 ```
 src/
-  pages/       Pantallas (LoginPage, AgendaPage — una por historia de usuario)
-  components/  Componentes reutilizables (vacío por ahora, se llena en el siguiente sprint)
+  pages/       Pantallas de la aplicación
+  components/  Componentes reutilizables
   services/    api.js — cliente centralizado que llama a la API REST
-  App.jsx      Rutas de la aplicación (react-router-dom)
+  App.jsx      Definición de rutas (react-router-dom)
   main.jsx     Punto de entrada de React
   index.css    Estilos base
 ```
 
-## Pantallas implementadas (sprint actual)
+## Pantallas
 
-- **LoginPage** (HU-11): formulario listo, pendiente de conectar a `/api/auth/login`
-  cuando el backend lo exponga.
-- **AgendaPage** (HU-12): lista las citas reales desde `GET /api/citas` y permite
-  confirmar/cancelar usando los endpoints ya funcionales del backend.
-
-## Pendiente por implementar (siguiente sprint)
-
-- [ ] Conectar LoginPage al endpoint real y guardar el token JWT
-- [ ] Formulario para agendar una nueva cita (POST /api/citas)
-- [ ] FichaNinoPage con historial y progreso (HU-13)
-- [ ] Formulario de registro de sesión para terapeutas (HU-14)
-- [ ] Rutas protegidas según rol (redirigir si no hay token)
+- Página principal, login y registro de apoderado.
+- Mis hijos y registro de niño.
+- Agendar cita (horario de 8:00 am a 8:00 pm, lunes a sábado) y avance y pagos.
+- Agenda de citas para recepcionista y terapeuta, con confirmar, cancelar y atender.
+- Gestión de trabajadores para el administrador: alta de empleados con contrato y ficha del contrato.
+- Ingresos y pagos por rango de fechas.
+- Perfil y teléfonos.
