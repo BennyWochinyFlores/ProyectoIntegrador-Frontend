@@ -28,6 +28,7 @@ export default function AgendaPage() {
   const [nuevaFecha, setNuevaFecha] = useState("");
   const [nuevaHora, setNuevaHora] = useState("");
   const [guardando, setGuardando] = useState(false);
+  const [ocupadosRepro, setOcupadosRepro] = useState([]);
 
   const hoy = new Date().toISOString().slice(0, 10);
 
@@ -38,6 +39,17 @@ export default function AgendaPage() {
       .catch(() => setError("No se pudo cargar la agenda. Verifica que el backend esté corriendo."))
       .finally(() => setCargando(false));
   }, []);
+
+  // Horarios ocupados del terapeuta de la cita que se está reprogramando, para la nueva fecha
+  useEffect(() => {
+    if (!reprogramando || !nuevaFecha || !reprogramando.terapeutaId) {
+      setOcupadosRepro([]);
+      return;
+    }
+    api.horariosOcupados(reprogramando.terapeutaId, nuevaFecha)
+      .then((lista) => setOcupadosRepro(lista.filter((o) => String(o.fechaHora) !== String(reprogramando.fechaHora))))
+      .catch(() => setOcupadosRepro([]));
+  }, [reprogramando, nuevaFecha]);
 
   function abrirReprogramar(atencion) {
     setError("");
@@ -51,7 +63,30 @@ export default function AgendaPage() {
     setReprogramando(null);
     setNuevaFecha("");
     setNuevaHora("");
+    setOcupadosRepro([]);
   }
+
+  // Una hora está ocupada si se solapa con otra cita del terapeuta (excluyendo la propia)
+  function horaReprogramarOcupada(h) {
+    if (!reprogramando || !nuevaFecha || ocupadosRepro.length === 0) return false;
+    const duracion = reprogramando.duracionMinutos || 60;
+    const ini = Number(h.slice(0, 2)) * 60 + Number(h.slice(3, 5));
+    const fin = ini + duracion;
+    return ocupadosRepro.some((o) => {
+      if (!String(o.fechaHora).startsWith(nuevaFecha)) return false;
+      const d = new Date(o.fechaHora);
+      const s = d.getHours() * 60 + d.getMinutes();
+      const e = s + (o.duracionMinutos || 60);
+      return ini < e && s < fin;
+    });
+  }
+
+  // Si la hora seleccionada quedó ocupada, limpiarla
+  useEffect(() => {
+    if (nuevaHora && reprogramando && nuevaHora !== `${String(new Date(reprogramando.fechaHora).getHours()).padStart(2, "0")}:00` && horaReprogramarOcupada(nuevaHora)) {
+      setNuevaHora("");
+    }
+  }, [ocupadosRepro, nuevaFecha, reprogramando]);
 
   async function confirmarReprogramar(e) {
     e.preventDefault();
@@ -150,14 +185,14 @@ export default function AgendaPage() {
               </td>
               <td>
                 <div className="persona-cell">
-                  <span className="avatar avatar-claro">{iniciales(c.trabajador?.persona?.nombreCompleto)}</span>
-                  <span className="persona-nombre">{c.trabajador?.persona?.nombreCompleto || "-"}</span>
+                  <span className="avatar avatar-claro">{iniciales(c.terapeuta)}</span>
+                  <span className="persona-nombre">{c.terapeuta || "-"}</span>
                 </div>
               </td>
               <td>
-                <span className="esp-nombre">{c.especialidad?.nombre || "-"}</span>
-                {c.especialidad?.precio != null && (
-                  <span className="esp-precio">S/ {Number(c.especialidad.precio).toFixed(2)}</span>
+                <span className="esp-nombre">{c.especialidad || "-"}</span>
+                {c.precio != null && (
+                  <span className="esp-precio">S/ {Number(c.precio).toFixed(2)}</span>
                 )}
               </td>
               <td>
@@ -222,8 +257,8 @@ export default function AgendaPage() {
                         navigate("/registrar-avance", {
                           state: {
                             atencionId: c.id,
-                            atencionLabel: `${c.nino?.nombreCompleto || c.nino?.nombres} — ${c.especialidad?.nombre} (${new Date(c.fechaHora).toLocaleString("es-PE")})`,
-                            duracion: c.especialidad?.duracionMinutos || 45,
+                            atencionLabel: `${c.nino?.nombreCompleto || c.nino?.nombres} — ${c.especialidad} (${new Date(c.fechaHora).toLocaleString("es-PE")})`,
+                            duracion: c.duracionMinutos || 45,
                           },
                         })
                       }
@@ -253,7 +288,7 @@ export default function AgendaPage() {
             <h2 className="modal-titulo">Reprogramar atención</h2>
             <p className="modal-sub">
               {reprogramando.nino?.nombreCompleto || reprogramando.nino?.nombres} —{" "}
-              {reprogramando.especialidad?.nombre}
+              {reprogramando.especialidad}
             </p>
 
             <label className="campo-bloque">
@@ -266,21 +301,31 @@ export default function AgendaPage() {
               />
             </label>
 
-            <div className="campo-bloque">
-              <span className="campo-etiqueta">Nueva hora</span>
-              <div className="horas-grid">
-                {HORAS.map((h) => (
-                  <button
-                    key={h}
-                    type="button"
-                    className={`hora-chip ${nuevaHora === h ? "activa" : ""}`}
-                    onClick={() => setNuevaHora(h)}
-                  >
-                    {h}
-                  </button>
-                ))}
+              <div className="campo-bloque">
+                <span className="campo-etiqueta">Nueva hora</span>
+                <div className="horas-grid">
+                  {HORAS.map((h) => {
+                    const ocupada = horaReprogramarOcupada(h);
+                    return (
+                      <button
+                        key={h}
+                        type="button"
+                        className={`hora-chip ${nuevaHora === h ? "activa" : ""} ${ocupada ? "ocupada" : ""}`}
+                        disabled={ocupada}
+                        title={ocupada ? "El terapeuta ya tiene una sesión en este horario" : undefined}
+                        onClick={() => setNuevaHora(h)}
+                      >
+                        {h}
+                      </button>
+                    );
+                  })}
+                </div>
+                {nuevaFecha && ocupadosRepro.length > 0 && (
+                  <p className="campo-etiqueta" style={{ fontWeight: "normal", marginTop: 6 }}>
+                    Las horas tachadas ya están reservadas para este terapeuta ese día.
+                  </p>
+                )}
               </div>
-            </div>
 
             <div className="modal-acciones">
               <button

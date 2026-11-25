@@ -6,15 +6,21 @@ import { getUser } from "../services/auth.js";
 const OPCIONES_POR_GENERO = {
   F: [
     { valor: "MADRE", etiqueta: "Madre" },
+    { valor: "PADRE", etiqueta: "Padre" },
     { valor: "TUTOR", etiqueta: "Tutor" },
   ],
   M: [
+    { valor: "MADRE", etiqueta: "Madre" },
     { valor: "PADRE", etiqueta: "Padre" },
     { valor: "TUTOR", etiqueta: "Tutor" },
   ],
 };
 
-const PARENTESCOS_SOLO_TUTOR = [{ valor: "TUTOR", etiqueta: "Tutor" }];
+const PARENTESCOS_SOLO_TUTOR = [
+  { valor: "MADRE", etiqueta: "Madre" },
+  { valor: "PADRE", etiqueta: "Padre" },
+  { valor: "TUTOR", etiqueta: "Tutor" },
+];
 
 export default function RegistrarNinoPage() {
   const navigate = useNavigate();

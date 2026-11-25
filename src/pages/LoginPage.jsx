@@ -14,6 +14,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [mostrarPassword, setMostrarPassword] = useState(false);
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
 
@@ -56,12 +57,31 @@ export default function LoginPage() {
         </label>
         <label>
           Contraseña
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+            <input
+              type={mostrarPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{ paddingRight: "2.5rem", width: "100%" }}
+            />
+            <button
+              type="button"
+              onClick={() => setMostrarPassword(!mostrarPassword)}
+              style={{
+                position: "absolute",
+                right: "0.5rem",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "1.2rem",
+                padding: "0.25rem",
+              }}
+              title={mostrarPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {mostrarPassword ? "🙈" : "👁️"}
+            </button>
+          </div>
         </label>
         {error && <p className="error-text">{error}</p>}
         <button type="submit" disabled={cargando}>

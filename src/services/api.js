@@ -41,7 +41,7 @@ export const api = {
   listarAtenciones: () => request("/atenciones"),
   obtenerAtencion: (id) => request(`/atenciones/${id}`),
   agendarAtencion: (datos) =>
-    request("/atenciones", { method: "POST", body: JSON.stringify(datos) }),
+    request("/citas", { method: "POST", body: JSON.stringify(datos) }),
   confirmarAtencion: (id) => request(`/atenciones/${id}/confirmar`, { method: "PUT" }),
   reprogramarAtencion: (id, datos) =>
     request(`/atenciones/${id}/reprogramar`, { method: "PUT", body: JSON.stringify(datos) }),
@@ -76,6 +76,8 @@ export const api = {
 
   listarEspecialidades: () => request("/especialidades"),
   listarTerapeutas: () => request("/terapeutas"),
+  horariosOcupados: (terapeutaId, fecha) =>
+    request(`/citas/ocupados?terapeutaId=${terapeutaId}&fecha=${fecha}`),
   listarNinos: () => request("/ninos"),
   misHijos: () => request("/ninos/mis-hijos"),
   registrarNino: (datos) => request("/ninos", { method: "POST", body: JSON.stringify(datos) }),

@@ -12,6 +12,7 @@ export default function RegistrarTrabajadorPage() {
   const [especialidades, setEspecialidades] = useState([]);
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
+  const [mostrarPassword, setMostrarPassword] = useState(false);
   const [form, setForm] = useState({
     apellidoPaterno: "",
     apellidoMaterno: "",
@@ -165,7 +166,32 @@ export default function RegistrarTrabajadorPage() {
           </label>
           <label>
             Contraseña (mínimo 6 caracteres, con letras y números)
-            <input type="password" value={form.password} minLength={6} onChange={(e) => cambiar("password", e.target.value)} required />
+            <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+              <input
+                type={mostrarPassword ? "text" : "password"}
+                value={form.password}
+                minLength={6}
+                onChange={(e) => cambiar("password", e.target.value)}
+                required
+                style={{ paddingRight: "2.5rem", width: "100%" }}
+              />
+              <button
+                type="button"
+                onClick={() => setMostrarPassword(!mostrarPassword)}
+                style={{
+                  position: "absolute",
+                  right: "0.5rem",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "1.2rem",
+                  padding: "0.25rem",
+                }}
+                title={mostrarPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                {mostrarPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
             <PasswordStrength password={form.password} />
           </label>
         </div>

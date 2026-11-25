@@ -3030,6 +3030,15 @@ textarea {
   cursor: not-allowed;
 }
 
+.hora-chip.ocupada {
+  border-color: #ef4444;
+  background: #fee2e2;
+  color: #991b1b;
+  text-decoration: line-through;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .agendar-resumen {
   background: var(--w-bebe-1);
   border: 1px solid #e5e7eb;

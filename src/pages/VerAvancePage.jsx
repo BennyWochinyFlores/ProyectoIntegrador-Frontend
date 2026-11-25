@@ -101,7 +101,7 @@ export default function VerAvancePage() {
                 <h3>Apoderado</h3>
                 <div className="perfil-fila">
                   <span className="perfil-etiqueta">Nombre</span>
-                  <strong>{nino?.apoderado?.persona?.nombreCompleto || "-"}</strong>
+                  <strong>{nino?.apoderado?.nombre || "-"}</strong>
                 </div>
                 <div className="perfil-fila">
                   <span className="perfil-etiqueta">Parentesco</span>
@@ -149,13 +149,13 @@ export default function VerAvancePage() {
                         </div>
                       </td>
                       <td>
-                        <span className="esp-nombre">{s.especialidad?.nombre || "-"}</span>
+                        <span className="esp-nombre">{s.especialidad || "-"}</span>
                         {s.duracionMinutos && <span className="esp-precio">{s.duracionMinutos} min</span>}
                       </td>
                       <td>
                         <div className="persona-cell">
-                          <span className="avatar avatar-claro">{iniciales(s.trabajador?.persona?.nombreCompleto)}</span>
-                          <span className="persona-nombre">{s.trabajador?.persona?.nombreCompleto || "-"}</span>
+                          <span className="avatar avatar-claro">{iniciales(s.terapeuta)}</span>
+                          <span className="persona-nombre">{s.terapeuta || "-"}</span>
                         </div>
                       </td>
                       <td>

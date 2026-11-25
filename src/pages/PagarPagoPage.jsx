@@ -70,7 +70,7 @@ export default function PagarPagoPage() {
   }
 
   const nino = pago.atencion?.nino?.nombreCompleto || "Paciente";
-  const especialidad = pago.atencion?.especialidad?.nombre || "-";
+  const especialidad = pago.atencion?.especialidad || "-";
   const fechaAtencion = pago.atencion?.fechaHora
     ? new Date(pago.atencion.fechaHora).toLocaleString("es-PE", {
         day: "2-digit",

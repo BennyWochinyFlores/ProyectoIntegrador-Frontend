@@ -118,7 +118,7 @@ export default function AvancePagosPage() {
                                   </div>
                                 </td>
                                 <td>
-                                  <span className="esp-nombre">{s.especialidad?.nombre || "-"}</span>
+                                  <span className="esp-nombre">{s.especialidad || "-"}</span>
                                   {s.duracionMinutos && (
                                     <span className="esp-precio">{s.duracionMinutos} min</span>
                                   )}
@@ -126,10 +126,10 @@ export default function AvancePagosPage() {
                                 <td>
                                   <div className="persona-cell">
                                     <span className="avatar avatar-claro">
-                                      {iniciales(s.trabajador?.persona?.nombreCompleto)}
+                                      {iniciales(s.terapeuta)}
                                     </span>
                                     <span className="persona-nombre">
-                                      {s.trabajador?.persona?.nombreCompleto || "-"}
+                                      {s.terapeuta || "-"}
                                     </span>
                                   </div>
                                 </td>
@@ -178,7 +178,7 @@ export default function AvancePagosPage() {
                     {pendientes.map((p) => (
                       <tr key={p.id}>
                         <td>{p.atencion?.nino?.nombreCompleto || "-"}</td>
-                        <td>{p.atencion?.especialidad?.nombre || "-"}</td>
+                        <td>{p.atencion?.especialidad || "-"}</td>
                         <td><strong>S/ {Number(p.monto).toFixed(2)}</strong></td>
                         <td>
                           <button

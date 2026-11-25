@@ -14,6 +14,7 @@ export default function AgendarApoderadoPage() {
   const [terapeutas, setTerapeutas] = useState([]);
   const [horario, setHorario] = useState({ feriados: [], diasCerrados: [] });
   const [form, setForm] = useState({ ninoId: "", especialidadId: "", trabajadorId: "", fecha: "", hora: "" });
+  const [ocupados, setOcupados] = useState([]);
   const [error, setError] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [cargando, setCargando] = useState(true);
@@ -38,6 +39,39 @@ export default function AgendarApoderadoPage() {
   const hijo = (apoderado?.hijos || []).find((n) => String(n.id) === form.ninoId);
   const esp = especialidades.find((e) => String(e.id) === form.especialidadId);
   const ter = terapeutas.find((t) => String(t.id) === form.trabajadorId);
+  const duracionSel = esp?.duracionMinutos || 45;
+
+  // Cargar horarios ocupados del terapeuta para la fecha elegida
+  useEffect(() => {
+    if (!form.trabajadorId || !form.fecha || esNoLaborable(form.fecha)) {
+      setOcupados([]);
+      return;
+    }
+    api.horariosOcupados(form.trabajadorId, form.fecha)
+      .then((lista) => setOcupados(lista))
+      .catch(() => setOcupados([]));
+  }, [form.trabajadorId, form.fecha]);
+
+  // Un horario NO deshabilitado queda ocupado si se solapa con una cita del terapeuta
+  function horaOcupada(h) {
+    if (!form.trabajadorId || !form.fecha || ocupados.length === 0) return false;
+    const ini = Number(h.slice(0, 2)) * 60 + Number(h.slice(3, 5));
+    const fin = ini + duracionSel;
+    return ocupados.some((o) => {
+      if (!String(o.fechaHora).startsWith(form.fecha)) return false;
+      const d = new Date(o.fechaHora);
+      const s = d.getHours() * 60 + d.getMinutes();
+      const e = s + (o.duracionMinutos || 60);
+      return ini < e && s < fin; // solapan en el tiempo
+    });
+  }
+
+  // Si la hora seleccionada quedó ocupada, limpiarla
+  useEffect(() => {
+    if (form.hora && horaOcupada(form.hora)) {
+      setForm((f) => ({ ...f, hora: "" }));
+    }
+  }, [ocupados, duracionSel]);
   const completo = Boolean(hijo && esp && ter && form.fecha && form.hora);
   const fechaLabel = form.fecha
     ? new Date(`${form.fecha}T00:00:00`).toLocaleDateString("es-PE", {
@@ -80,7 +114,7 @@ export default function AgendarApoderadoPage() {
       const agenda = await api.agendarAtencion({
         ninoId: Number(form.ninoId),
         especialidadId: Number(form.especialidadId),
-        trabajadorId: Number(form.trabajadorId),
+        terapeutaId: Number(form.trabajadorId),
         fechaHora,
       });
       setMensaje(`Cita solicitada para el ${new Date(fechaHora).toLocaleString("es-PE")} (estado: ${agenda.estado}). El centro la confirmará.`);
@@ -163,7 +197,7 @@ export default function AgendarApoderadoPage() {
                 <option value="">Selecciona el terapeuta</option>
                 {terapeutas.map((t) => (
                   <option key={t.id} value={t.id}>
-                    {t.nombre}{t.colegiatura ? ` · ${t.colegiatura}` : ""}
+                    {t.usuario?.nombre || t.nombre}{t.colegiatura ? ` · ${t.colegiatura}` : ""}
                   </option>
                 ))}
               </select>
@@ -185,18 +219,25 @@ export default function AgendarApoderadoPage() {
               <div className="grupo-campo">
                 <span className="campo-etiqueta">Hora</span>
                 <div className="horas-grid">
-                  {HORAS.map((h) => (
-                    <button
-                      type="button"
-                      key={h}
-                      className={`hora-chip ${form.hora === h ? "activa" : ""}`}
-                      disabled={!form.fecha || esNoLaborable(form.fecha)}
-                      onClick={() => setForm({ ...form, hora: h })}
-                    >
-                      {h}
-                    </button>
-                  ))}
+                  {HORAS.map((h) => {
+                    const ocupada = horaOcupada(h);
+                    return (
+                      <button
+                        type="button"
+                        key={h}
+                        className={`hora-chip ${form.hora === h ? "activa" : ""} ${ocupada ? "ocupada" : ""}`}
+                        disabled={!form.fecha || esNoLaborable(form.fecha) || ocupada}
+                        title={ocupada ? "El terapeuta ya tiene una sesión en este horario" : undefined}
+                        onClick={() => setForm({ ...form, hora: h })}
+                      >
+                        {h}
+                      </button>
+                    );
+                  })}
                 </div>
+                {form.trabajadorId && form.fecha && ocupados.length > 0 && (
+                  <p className="ayuda-campo">Las horas tachadas ya están reservadas para este terapeuta.</p>
+                )}
               </div>
             </div>
           </div>
@@ -205,7 +246,7 @@ export default function AgendarApoderadoPage() {
             <h3 className="resumen-titulo">Resumen de la cita</h3>
             {filaResumen("Hijo", hijo?.nombreCompleto)}
             {filaResumen("Especialidad", esp?.nombre)}
-            {filaResumen("Terapeuta", ter?.nombre)}
+            {filaResumen("Terapeuta", ter?.usuario?.nombre || ter?.nombre)}
             {filaResumen("Fecha", form.fecha && form.hora ? `${fechaLabel} · ${form.hora}` : (fechaLabel || ""))}
             {esp && (
               <div className="resumen-total">

@@ -123,8 +123,8 @@ export default function PagosPage() {
                       <tr key={p.id}>
                         <td>{new Date(p.fechaPago).toLocaleString("es-PE")}</td>
                         <td>{p.atencion?.nino?.nombreCompleto || "-"}</td>
-                        <td>{p.atencion?.nino?.apoderado?.persona?.nombreCompleto || "-"}</td>
-                        <td>{p.atencion?.especialidad?.nombre || "-"}</td>
+                        <td>{p.atencion?.nino?.apoderado?.nombre || "-"}</td>
+                        <td>{p.atencion?.especialidad || "-"}</td>
                         <td>{p.metodo}</td>
                         <td>S/ {Number(p.monto).toFixed(2)}</td>
                         <td><span className={`badge badge-${String(p.estado).toLowerCase()}`}>{p.estado}</span></td>

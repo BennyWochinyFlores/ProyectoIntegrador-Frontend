@@ -74,10 +74,34 @@ export default function RegistrarAvancePage() {
     }
   }
 
+  function elegirArchivo(f) {
+    if (!f) {
+      setArchivo(null);
+      return;
+    }
+    if (!/\.(doc|docx)$/i.test(f.name)) {
+      setError("El diagnóstico debe ser un archivo Word (.doc o .docx).");
+      setArchivo(null);
+      return;
+    }
+    if (f.size > 5 * 1024 * 1024) {
+      setError("El diagnóstico no debe superar los 5 MB.");
+      setArchivo(null);
+      return;
+    }
+    setError("");
+    setArchivo(f);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
     setMensaje("");
+    // El diagnostico es obligatorio para sesiones con asistencia (si aún no tiene uno subido)
+    if (esTerapeuta && asistio && !archivo && !diagnostico) {
+      setError("El diagnóstico es obligatorio: sube el archivo Word de la sesión antes de registrar el avance.");
+      return;
+    }
     setCargando(true);
     try {
       const att = await api.atenderAtencion(atencionId, {
@@ -122,9 +146,9 @@ export default function RegistrarAvancePage() {
   }
 
   const nombre = detalle?.nino?.nombreCompleto || atencionLabel.split("—")[0]?.trim() || "Paciente";
-  const especialidad = detalle?.especialidad?.nombre;
-  const precio = detalle?.especialidad?.precio;
-  const terapeuta = detalle?.trabajador?.persona?.nombreCompleto;
+  const especialidad = detalle?.especialidad;
+  const precio = null;
+  const terapeuta = detalle?.terapeuta;
   const siguienteNivel = detalle?.siguienteNivel || "INICIAL";
   const fechaHora = detalle?.fechaHora
     ? new Date(detalle.fechaHora).toLocaleString("es-PE", {
@@ -258,15 +282,19 @@ export default function RegistrarAvancePage() {
 
           {esTerapeuta && (
             <div className="grupo-campo">
-              <span className="campo-etiqueta">Diagnóstico (archivo Word)</span>
+              <span className="campo-etiqueta">
+                Diagnóstico (archivo Word) {asistio && !diagnostico && <em style={{ color: "#b91c1c" }}>— obligatorio</em>}
+              </span>
               <input
                 type="file"
                 accept=".doc,.docx"
-                onChange={(e) => setArchivo(e.target.files?.[0] || null)}
+                required={esTerapeuta && asistio && !diagnostico}
+                onChange={(e) => elegirArchivo(e.target.files?.[0] || null)}
               />
               <p className="ayuda-campo">
-                Sube el documento Word (.doc/.docx, máx. 5 MB) con todas las especificaciones del
-                paciente. Solo el terapeuta puede subirlo.
+                Sube el documento Word (.doc/.docx, máx. 5 MB) con el diagnóstico de la sesión.
+                Es obligatorio cuando el paciente asistió; si ya registraste uno, puedes actualizarlo aquí.
+                Solo el terapeuta puede subirlo.
               </p>
               {archivo && (
                 <p className="archivo-seleccionado">
